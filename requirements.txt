@@ -2,3 +2,4 @@
 gspread
 google-auth
 slack_sdk
+gunicorn
