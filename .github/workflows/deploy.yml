@@ -23,10 +23,16 @@ jobs:
       with:
         project_id: chatgpt-hr-461008
 
+    - name: Build and Push Docker image
+      run: |
+        docker build -t gcr.io/chatgpt-hr-461008/gowid-notification .
+        gcloud auth configure-docker
+        docker push gcr.io/chatgpt-hr-461008/gowid-notification
+
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy gowid-notification \
-          --source . \
+          --image gcr.io/chatgpt-hr-461008/gowid-notification \
           --region asia-northeast3 \
           --platform managed \
           --allow-unauthenticated \
