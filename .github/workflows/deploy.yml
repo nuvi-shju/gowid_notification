@@ -1,0 +1,33 @@
+name: Deploy gowid_notification to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up gcloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: chatgpt-hr-461008
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy gowid-notification \
+          --source . \
+          --region asia-northeast3 \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
