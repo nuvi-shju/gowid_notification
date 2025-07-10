@@ -41,10 +41,10 @@ def send_slack_dm(user_id, message, channel=False):
         print(f"[X] Slack 메시지 전송 실패 ({user_id}): {e.response['error']}")
 
 # ==== 메인 ====
-def main(request=None):
+def main(payload={}):
     try:
-        payload = request.get_json(silent=True) if request else {}
-        is_test = payload.get('test', False)
+        # payload = request.get_json(silent=True) if request else {}
+        is_test = payload.get('test') in ['true', True, 'True']
 
         if is_test:
             print("[TEST MODE] Slack 메시지는 전송되지 않습니다.")
@@ -117,4 +117,8 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 def entrypoint():
-    return main(request)
+    if request.is_json:
+        payload = request.get_json(silent=True) or {}
+    else:
+        payload = request.form.to_dict()
+    return main(payload)
