@@ -38,4 +38,5 @@ jobs:
           --region asia-northeast3 \
           --platform managed \
           --allow-unauthenticated \
+          --service-account=notify-gowid-slack-sa@chatgpt-hr-461008.iam.gserviceaccount.com \
           --set-env-vars SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
