@@ -43,6 +43,13 @@ def send_slack_dm(user_id, message, channel=False):
 # ==== 메인 ====
 def main(request=None):
     try:
+        payload = request.get_json(silent=True) if request else {}
+        is_test = payload.get('test', False)
+
+        if is_test:
+            print("[TEST MODE] Slack 메시지는 전송되지 않습니다.")
+            return "✅ 테스트 성공 (Slack 메시지 전송 안 됨)"
+
         print(f"DEBUG: SLACK_BOT_TOKEN = {slack_token}")
         # 1. 날짜 계산
         today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
