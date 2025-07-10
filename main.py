@@ -108,6 +108,6 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["POST", "GET"])
 def entrypoint():
-    return main()
+    return main(request)
