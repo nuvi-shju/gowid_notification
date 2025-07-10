@@ -3,7 +3,7 @@ import traceback
 import logging
 import datetime
 import gspread
-from google.oauth2.service_account import Credentials
+from google.auth import default
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -14,10 +14,9 @@ SLACK_ALERT_CHANNEL_ID = "#주서희-자동화"
 SPREADSHEET_ID = '1eVcUubguFBPvXn5jUQDoRIbGPyk1NycgDP9txj1iIFo'  # 고위드 위반내역
 USERMAP_SHEET_ID = '1IwdHNEywDtFyvBzh-bHBcnHiNF1aGb3aoL0fDFgYLlo'  # 사용자 매핑 시트
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = 'credentials.json'
 
 # ==== 인증 ====
-credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+credentials, _ = default(scopes=SCOPES)
 gc = gspread.authorize(credentials)
 slack_token = os.environ.get('SLACK_BOT_TOKEN')
 slack_client = WebClient(token=slack_token)
