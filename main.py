@@ -79,6 +79,7 @@ def main(payload={}):
             dinner_violation = row.get('저녁 위반금액', 0)
             dinner_count = row.get('저녁 위반건수', 0)
             misuse_violation = row.get('개인오사용금액', 0)
+            other_violation = row.get('기타 위반금액', 0)
             print(f"DEBUG: name={name}, total={total_deduction}, direct={direct_payment}")
 
             if not name:
@@ -86,14 +87,15 @@ def main(payload={}):
             if (total_deduction is None or total_deduction == 0) and (direct_payment is None or direct_payment == 0):
                 continue
 
-            msg = f"*{name}님*, {ym[:4]}년 {int(ym[4:])}월 법카 내역 안내드립니다.\n\n"
+            msg = f"*{name}님*, {ym[:4]}년 {int(ym[4:])}월 고위드 법인카드 사용 내역 안내드립니다.\n\n"
             if total_deduction:
                 msg += f"💸 급여에서 차감 예정 금액: *{total_deduction:,}원*\n"
-                msg += f"- 점심식비 초과: {lunch_violation:,}원\n"
-                msg += f"- 저녁식비 초과: {dinner_violation:,}원 ({dinner_count}회)\n"
-                msg += f"- 개인용도 오사용(급여공제): {misuse_violation:,}원\n\n"
+                msg += f"- 🥗 점심식비 초과: {lunch_violation:,}원\n"
+                msg += f"- 🍽 저녁식비 초과: {dinner_violation:,}원 ({dinner_count}회)\n"
+                msg += f"- ⚠️ 기타 위반금액: {other_violation:,}원\n"
+                msg += f"- ✋ 개인 오사용(급여 차감): {misuse_violation:,}원\n\n"
             if direct_payment:
-                msg += f"🏦 개인용도 오사용(직접입금): *{direct_payment:,}원*\n"
+                msg += f"🏦 개인 오사용(직접 입금): *{direct_payment:,}원*\n"
                 msg += "입금 계좌: 기업은행 471-067757-04-016 주식회사 누비랩\n"
                 msg += "입금 후 *<@U05G6HZPZNE>*에게 슬랙으로 알려주세요 🙏"
 
