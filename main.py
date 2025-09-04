@@ -96,6 +96,7 @@ def main(payload={}):
                 msg += f"- ✋ 개인 오사용(급여 차감): {misuse_violation:,}원\n\n"
             if direct_payment:
                 msg += f"🏦 개인 오사용(직접 입금): *{direct_payment:,}원*\n"
+                msg += "반드시 개인 오사용(직접 입금) 금액만 입금 부탁드립니다.\n\n"
                 msg += "입금 계좌: 기업은행 471-067757-04-016 주식회사 누비랩\n"
                 msg += "입금 후 *<@U05G6HZPZNE>*에게 슬랙으로 알려주세요 🙏"
 
