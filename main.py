@@ -105,6 +105,8 @@ def main(payload={}):
                 send_slack_dm(slack_id, msg)
             else:
                 print(f"[경고] Slack ID를 찾을 수 없음: {name}")
+        # Slack 알림 채널에 완료 메시지 전송
+        send_slack_dm(SLACK_ALERT_CHANNEL_ID, f"{ym} Slack 알림 전송 완료 ✅", channel=True)
         return 'Slack 알림 전송 완료'
     except Exception as e:
         error_message = traceback.format_exc()
