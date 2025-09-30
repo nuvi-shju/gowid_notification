@@ -53,7 +53,10 @@ def main(payload={}):
 
         print(f"DEBUG: SLACK_BOT_TOKEN = {slack_token}")
         # 1. 날짜 계산
-        today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
+        if payload.get("current_month") in ['true', True, 'True']:
+            today = datetime.datetime.now()
+        else:
+            today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
         ym = today.strftime('%Y%m')  # e.g., '202507'
         print(f"[로그] 이번에 처리할 대상 월은 {ym} 입니다.")
 
