@@ -43,8 +43,9 @@ def send_slack_dm(user_id, message, channel=False):
 # ==== 메인 ====
 def main(payload={}):
     try:
-        # payload = request.get_json(silent=True) if request else {}
+        print("[로그] 고위드 알림 처리 시작합니다.")
         is_test = payload.get('test') in ['true', True, 'True']
+        print(f"[로그] 테스트 모드 여부: {is_test}")
 
         if is_test:
             print("[TEST MODE] Slack 메시지는 전송되지 않습니다.")
@@ -54,14 +55,17 @@ def main(payload={}):
         # 1. 날짜 계산
         today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
         ym = today.strftime('%Y%m')  # e.g., '202507'
+        print(f"[로그] 이번에 처리할 대상 월은 {ym} 입니다.")
 
         # 2. 슬랙 사용자 맵 불러오기
         user_map = load_user_map()
+        print(f"[로그] 사용자 매핑 데이터 {len(user_map)}명 로드 완료")
 
         # 3. 위반내역 시트 열기
         try:
             sh = gc.open_by_key(SPREADSHEET_ID)
             ws = sh.worksheet(ym)
+            print(f"[로그] 스프레드시트 '{ym}' 시트 열기 성공")
         except:
             msg = f"[!] {ym} 시트 없음"
             print(msg)
@@ -69,6 +73,7 @@ def main(payload={}):
             return msg
 
         data = ws.get_all_records()  # 리스트[dict]
+        print(f"[로그] 총 {len(data)}개의 위반내역 데이터 로드 완료")
 
         for row in data:
             name = row.get('소지자')
@@ -80,11 +85,14 @@ def main(payload={}):
             dinner_count = row.get('저녁 위반건수', 0)
             misuse_violation = row.get('개인오사용금액', 0)
             other_violation = row.get('기타 위반금액', 0)
-            print(f"DEBUG: name={name}, total={total_deduction}, direct={direct_payment}")
 
             if not name:
+                print("[로그] 이름 정보 없음, 해당 행 건너뜀")
                 continue
+            print(f"[로그] {name} 데이터 처리 중...")
+
             if (total_deduction is None or total_deduction == 0) and (direct_payment is None or direct_payment == 0):
+                print(f"[로그] {name} 공제 총액 및 직접 입금 금액 모두 0, 건너뜀")
                 continue
 
             msg = f"*{name}님*, {ym[:4]}년 {int(ym[4:])}월 고위드 법인카드 사용 내역 안내드립니다.\n\n"
@@ -97,16 +105,18 @@ def main(payload={}):
             if direct_payment:
                 msg += f"🏦 개인 오사용(직접 입금): *{direct_payment:,}원*\n"
                 msg += "반드시 개인 오사용(직접 입금) 금액만 입금 부탁드립니다.\n\n"
-                msg += "입금 계좌: 기업은행 471-067757-04-016 주식회사 누비랩\n"
+                msg += "입금 계좌: 기업은행 47source venv/bin/activate1-067757-04-016 주식회사 누비랩\n"
                 msg += "입금 후 *<@U09541PAMN1>*에게 슬랙으로 알려주세요 🙏"
 
             slack_id = user_map.get(name)
             if slack_id:
                 send_slack_dm(slack_id, msg)
+                print(f"[로그] {name}님께 Slack DM 전송 완료")
             else:
-                print(f"[경고] Slack ID를 찾을 수 없음: {name}")
+                print(f"[경고] Slack ID를 찾지 못했습니다: {name}")
         # Slack 알림 채널에 완료 메시지 전송
         send_slack_dm(SLACK_ALERT_CHANNEL_ID, f"{ym} Slack 알림 전송 완료 ✅", channel=True)
+        print("[로그] 모든 알림 전송 완료")
         return 'Slack 알림 전송 완료'
     except Exception as e:
         error_message = traceback.format_exc()
@@ -127,3 +137,6 @@ def entrypoint():
     else:
         payload = request.form.to_dict()
     return main(payload)
+
+if __name__ == "__main__":
+    main({"test": False})
