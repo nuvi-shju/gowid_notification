@@ -53,10 +53,7 @@ def main(payload={}):
 
         print(f"DEBUG: SLACK_BOT_TOKEN = {slack_token}")
         # 1. 날짜 계산
-        if payload.get("current_month") in ['true', True, 'True']:
-            today = datetime.datetime.now()
-        else:
-            today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
+        today = datetime.datetime.now().replace(day=1) - datetime.timedelta(days=1)
         ym = today.strftime('%Y%m')  # e.g., '202507'
         print(f"[로그] 이번에 처리할 대상 월은 {ym} 입니다.")
 
@@ -108,7 +105,7 @@ def main(payload={}):
             if direct_payment:
                 msg += f"🏦 개인 오사용(직접 입금): *{direct_payment:,}원*\n"
                 msg += "반드시 개인 오사용(직접 입금) 금액만 입금 부탁드립니다.\n\n"
-                msg += "입금 계좌: 기업은행 47source venv/bin/activate1-067757-04-016 주식회사 누비랩\n"
+                msg += "입금 계좌: 기업은행 471-067757-04-016 주식회사 누비랩\n"
                 msg += "입금 후 *<@U09541PAMN1>*에게 슬랙으로 알려주세요 🙏"
 
             slack_id = user_map.get(name)
